@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A.I. REMIX CORE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;700&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glow-color: #00f2ff;
+            --secondary-glow: #ff00c1;
+            --bg-color: #0a0a1a;
+            --text-color: #d0d0ff;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Chakra Petch', sans-serif;
+            overflow-x: hidden;
+            background-image:
+                linear-gradient(rgba(10, 10, 26, 0.95), rgba(10, 10, 26, 0.95)),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%231a1a3a' fill-opacity='0.4'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .glitch-text {
+            font-family: 'VT323', monospace;
+            text-shadow: 0 0 5px var(--glow-color), 0 0 10px var(--glow-color), 0 0 20px var(--glow-color);
+            animation: glitch 1.5s infinite;
+        }
+
+        .cyber-panel {
+            background: rgba(15, 20, 40, 0.8);
+            border: 1px solid var(--glow-color);
+            box-shadow: 0 0 15px var(--glow-color) inset, 0 0 10px var(--glow-color);
+            backdrop-filter: blur(5px);
+        }
+
+        .cyber-button {
+            background: transparent;
+            border: 1px solid var(--glow-color);
+            color: var(--glow-color);
+            text-shadow: 0 0 5px var(--glow-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cyber-button:hover {
+            background: var(--glow-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 20px var(--glow-color);
+        }
+        
+        .cyber-button:disabled {
+            border-color: #555;
+            color: #555;
+            text-shadow: none;
+            cursor: not-allowed;
+        }
+        
+        .cyber-button:disabled:hover {
+            background: transparent;
+            box-shadow: none;
+        }
+
+        .cyber-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .cyber-button:hover::before {
+            left: 100%;
+        }
+        
+        input[type="file"]::file-selector-button {
+            background: transparent;
+            border: 1px solid var(--glow-color);
+            color: var(--glow-color);
+            padding: 0.5rem 1rem;
+            margin-right: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        input[type="file"]::file-selector-button:hover {
+            background: var(--glow-color);
+            color: var(--bg-color);
+        }
+        
+        .cyber-input {
+            background: rgba(10,10,20,0.7);
+            border: 1px solid var(--glow-color);
+            color: var(--text-color);
+        }
+        
+        .cyber-input:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--glow-color);
+        }
+        
+        @keyframes glitch {
+            0%, 100% { transform: skewX(0deg); text-shadow: 0 0 5px var(--glow-color); }
+            48% { transform: skewX(0deg); }
+            50% { transform: skewX(5deg); text-shadow: 0 0 5px var(--secondary-glow); }
+            52% { transform: skewX(-5deg); }
+            54% { transform: skewX(0deg); }
+        }
+        
+        #audio-player {
+            filter: hue-rotate(180deg) contrast(150%);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-4xl mx-auto space-y-6">
+        <!-- HEADER -->
+        <header class="text-center">
+            <h1 class="text-5xl md:text-7xl glitch-text">[ A.I. REMIX CORE ]</h1>
+            <p class="text-lg text-gray-400 mt-2">// Quantum Audio Processing Interface //</p>
+        </header>
+
+        <!-- MAIN CONTROL PANEL -->
+        <main id="mainPanel" class="cyber-panel rounded-lg p-6 space-y-6">
+            
+            <!-- STEP 1: INPUT SOURCE -->
+            <section id="inputSection">
+                <h2 class="text-2xl font-bold text-cyan-300 border-b-2 border-cyan-500 pb-2 mb-4">// STEP 01: LOAD AUDIO MATRIX</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                    <!-- File Upload -->
+                    <div class="space-y-2">
+                        <label for="audioFile" class="block font-semibold">// UPLOAD FROM LOCAL DRIVE:</label>
+                        <input id="audioFile" type="file" accept=".mp3" class="w-full text-sm rounded-md cyber-input">
+                    </div>
+                    <!-- YouTube URL -->
+                     <div class="space-y-2">
+                        <label for="youtubeUrl" class="block font-semibold">// FETCH FROM YOUTUBE URL:</label>
+                        <div class="flex gap-2">
+                           <input id="youtubeUrl" type="text" placeholder="https://www.youtube.com/watch?v=..." class="w-full px-3 py-2 rounded-md cyber-input">
+                           <button id="fetchBtn" class="cyber-button px-4 py-2 rounded-md whitespace-nowrap">FETCH</button>
+                        </div>
+                    </div>
+                </div>
+                 <p id="sourceStatus" class="text-center text-sm text-yellow-400 h-4 mt-2"></p>
+            </section>
+
+            <!-- STEP 2: REMIX OPTIONS -->
+            <section id="optionsSection" class="hidden">
+                 <h2 class="text-2xl font-bold text-cyan-300 border-b-2 border-cyan-500 pb-2 mb-4">// STEP 02: SELECT REMIX ALGORITHM</h2>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button class="cyber-button px-6 py-3 rounded-md text-lg" data-style="Trap">TRAP</button>
+                    <button class="cyber-button px-6 py-3 rounded-md text-lg" data-style="Big Room">BIG ROOM</button>
+                    <button class="cyber-button px-6 py-3 rounded-md text-lg" data-style="Techno">TECHNO</button>
+                    <button class="cyber-button px-6 py-3 rounded-md text-lg" data-style="House">HOUSE</button>
+                </div>
+            </section>
+            
+            <!-- STEP 3: ENGAGE -->
+            <section id="engageSection" class="text-center pt-4 hidden">
+                 <button id="remixBtn" class="cyber-button px-12 py-4 rounded-md text-2xl font-bold tracking-widest">ENGAGE REMIX CORE</button>
+                 <button id="resetBtn" class="cyber-button px-6 py-2 rounded-md text-sm mt-4">RESET INTERFACE</button>
+            </section>
+        </main>
+
+        <!-- PROCESSING/RESULTS PANEL -->
+        <div id="processingPanel" class="cyber-panel rounded-lg p-6 text-center hidden">
+            <h2 class="text-3xl font-bold text-yellow-400 mb-4">// PROCESSING...</h2>
+            <p id="statusText" class="text-xl font-mono h-8"></p>
+            <div id="results" class="hidden mt-6 space-y-4">
+                 <h2 class="text-3xl font-bold text-green-400">// REMIX COMPLETE</h2>
+                 <audio id="audio-player" controls class="w-full max-w-md mx-auto"></audio>
+                 <a id="download-link" class="cyber-button inline-block px-8 py-3 rounded-md text-xl">DOWNLOAD LOSSLESS FILE</a>
+                 <button id="startOverBtn" class="cyber-button px-6 py-2 rounded-md text-sm mt-4 block mx-auto">CREATE ANOTHER REMIX</button>
+            </div>
+        </div>
+        
+        <!-- API KEY PANEL -->
+        <div id="apiPanel" class="cyber-panel rounded-lg p-4">
+            <label for="apiKey" class="block text-sm font-semibold mb-2">// SYSTEM CONFIG: API KEY</label>
+             <div class="flex gap-2">
+               <input id="apiKey" type="password" placeholder="Enter your API key..." class="w-full px-3 py-2 rounded-md cyber-input">
+               <button id="validateBtn" class="cyber-button px-4 py-2 rounded-md whitespace-nowrap">VALIDATE</button>
+            </div>
+             <p id="apiKeyStatus" class="text-center text-sm text-green-400 h-4 mt-2"></p>
+        </div>
+
+    </div>
+
+    <script>
+        const audioFileInput = document.getElementById('audioFile');
+        const youtubeUrlInput = document.getElementById('youtubeUrl');
+        const fetchBtn = document.getElementById('fetchBtn');
+        const sourceStatus = document.getElementById('sourceStatus');
+        
+        const optionsSection = document.getElementById('optionsSection');
+        const engageSection = document.getElementById('engageSection');
+        const mainPanel = document.getElementById('mainPanel');
+        const processingPanel = document.getElementById('processingPanel');
+        const statusText = document.getElementById('statusText');
+        const results = document.getElementById('results');
+        const audioPlayer = document.getElementById('audio-player');
+        const downloadLink = document.getElementById('download-link');
+        const remixBtn = document.getElementById('remixBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const startOverBtn = document.getElementById('startOverBtn');
+        
+        const apiKeyInput = document.getElementById('apiKey');
+        const validateBtn = document.getElementById('validateBtn');
+        const apiKeyStatus = document.getElementById('apiKeyStatus');
+
+        let selectedFile = null;
+        let selectedUrl = '';
+        let selectedStyle = '';
+        let apiKey = '';
+
+        // --- API KEY HANDLING ---
+        validateBtn.addEventListener('click', () => {
+            if (apiKeyInput.value.trim() !== '') {
+                apiKey = apiKeyInput.value.trim();
+                apiKeyStatus.textContent = 'API Key Validated and Stored for Session.';
+                apiKeyStatus.classList.remove('text-red-500');
+                apiKeyStatus.classList.add('text-green-400');
+                setTimeout(() => apiKeyStatus.textContent = '', 3000);
+            } else {
+                 apiKeyStatus.textContent = 'Error: API Key cannot be empty.';
+                 apiKeyStatus.classList.add('text-red-500');
+            }
+        });
+
+        // --- INPUT HANDLING ---
+        const handleSourceSelection = (type, source) => {
+            if (type === 'file') {
+                selectedFile = source;
+                selectedUrl = '';
+                youtubeUrlInput.disabled = true;
+                fetchBtn.disabled = true;
+                sourceStatus.textContent = `// SOURCE LOCKED: ${selectedFile.name} //`;
+            } else if (type === 'url') {
+                selectedUrl = source;
+                selectedFile = null;
+                audioFileInput.disabled = true;
+                sourceStatus.textContent = `// SOURCE LOCKED: ${selectedUrl} //`;
+            }
+            optionsSection.classList.remove('hidden');
+        };
+
+        audioFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleSourceSelection('file', e.target.files[0]);
+            }
+        });
+
+        fetchBtn.addEventListener('click', () => {
+             if (youtubeUrlInput.value.trim() !== '') {
+                handleSourceSelection('url', youtubeUrlInput.value.trim());
+            }
+        });
+        
+        // --- STYLE SELECTION ---
+        optionsSection.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                document.querySelectorAll('#optionsSection button').forEach(btn => {
+                    btn.style.background = 'transparent';
+                    btn.style.color = 'var(--glow-color)';
+                });
+                e.target.style.background = 'var(--glow-color)';
+                e.target.style.color = 'var(--bg-color)';
+                selectedStyle = e.target.dataset.style;
+                engageSection.classList.remove('hidden');
+            }
+        });
+        
+        // --- API FUNCTION ---
+        async function callRemixApi(source, dataType, style, key) {
+            
+            // Use FormData to send files and text data together
+            const formData = new FormData();
+            formData.append('style', style);
+            
+            if (dataType === 'file') {
+                formData.append('audio_file', source);
+            } else {
+                formData.append('youtube_url', source);
+            }
+            
+            const updateStatus = (text) => {
+                statusText.textContent = text;
+            };
+
+            try {
+                updateStatus(`[1/4] Connecting to secure server...`);
+                // This is the actual request to your backend function.
+                // The path `/.netlify/functions/remix` automatically routes to your serverless function.
+                const response = await fetch('/.netlify/functions/remix', {
+                    method: 'POST',
+                    headers: {
+                        // We send the API key securely in the headers
+                        'Authorization': `Bearer ${key}`
+                    },
+                    body: formData
+                });
+                
+                updateStatus(`[2/4] Uploading audio data...`);
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ error: response.statusText }));
+                    throw new Error(`Server responded with ${response.status}: ${errorData.error}`);
+                }
+                
+                updateStatus(`[3/4] A.I. core is generating remix...`);
+
+                // We get the remixed audio back as a "blob" (a file-like object)
+                const audioBlob = await response.blob();
+                
+                updateStatus(`[4/4] Downloading lossless audio stream...`);
+                await new Promise(resolve => setTimeout(resolve, 1000)); // simulate download
+                
+                return audioBlob;
+
+            } catch (error) {
+                console.error("API Call failed:", error);
+                throw error; // Re-throw the error to be caught by the caller
+            }
+        }
+
+
+        // --- MAIN WORKFLOW ---
+        remixBtn.addEventListener('click', async () => {
+            if (!apiKey) {
+                apiKeyStatus.textContent = 'Error: API Key is required before engaging.';
+                apiKeyStatus.classList.add('text-red-500');
+                return;
+            }
+
+            mainPanel.classList.add('hidden');
+            processingPanel.classList.remove('hidden');
+            statusText.textContent = '[0/4] Initializing quantum link...';
+            results.classList.add('hidden');
+
+            const source = selectedFile || selectedUrl;
+            const dataType = selectedFile ? 'file' : 'url';
+
+            try {
+                const remixedAudioBlob = await callRemixApi(source, dataType, selectedStyle, apiKey);
+                
+                const audioUrl = URL.createObjectURL(remixedAudioBlob);
+                audioPlayer.src = audioUrl;
+                downloadLink.href = audioUrl;
+                downloadLink.download = `remix_${selectedStyle.toLowerCase()}_${Date.now()}.mp3`;
+                
+                results.classList.remove('hidden');
+                statusText.classList.add('hidden');
+
+            } catch (error) {
+                processingPanel.classList.remove('hidden');
+                statusText.classList.remove('hidden');
+                statusText.textContent = `// ERROR: ${error.message} //`;
+                statusText.style.color = 'red';
+                results.classList.add('hidden');
+                // Add a button to try again
+                 setTimeout(() => {
+                    const tryAgainBtn = document.createElement('button');
+                    tryAgainBtn.textContent = 'RESET & TRY AGAIN';
+                    tryAgainBtn.className = 'cyber-button px-6 py-2 rounded-md text-sm mt-4';
+                    tryAgainBtn.onclick = resetInterface;
+                    statusText.parentNode.appendChild(tryAgainBtn);
+                }, 1000);
+            }
+        });
+        
+        // --- RESET AND START OVER ---
+        function resetInterface() {
+            selectedFile = null;
+            selectedUrl = '';
+            selectedStyle = '';
+            
+            audioFileInput.value = '';
+            youtubeUrlInput.value = '';
+            audioFileInput.disabled = false;
+            youtubeUrlInput.disabled = false;
+            fetchBtn.disabled = false;
+
+            sourceStatus.textContent = '';
+            
+            document.querySelectorAll('#optionsSection button').forEach(btn => {
+                btn.style.background = 'transparent';
+                btn.style.color = 'var(--glow-color)';
+            });
+
+            optionsSection.classList.add('hidden');
+
+            engageSection.classList.add('hidden');
+            mainPanel.classList.remove('hidden');
+            processingPanel.classList.add('hidden');
+            results.classList.add('hidden');
+            statusText.classList.remove('hidden');
+            statusText.textContent = '';
+            statusText.style.color = 'var(--text-color)';
+
+            const oldTryAgainBtn = statusText.parentNode.querySelector('button');
+            if(oldTryAgainBtn) oldTryAgainBtn.remove();
+        }
+
+        resetBtn.addEventListener('click', resetInterface);
+        startOverBtn.addEventListener('click', resetInterface);
+
+    </script>
+</body>
+</html>
