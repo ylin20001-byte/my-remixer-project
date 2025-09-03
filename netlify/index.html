@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI EDM Remixer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-glow: #00f2ff;
+            --secondary-glow: #ff00c1;
+            --bg-color: #0d0221;
+        }
+
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background-color: var(--bg-color);
+            color: var(--primary-glow);
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .cyber-panel {
+            background: rgba(10, 24, 50, 0.4);
+            border: 1px solid var(--primary-glow);
+            box-shadow: 0 0 15px var(--primary-glow), inset 0 0 10px rgba(0, 242, 255, 0.3);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            position: relative;
+        }
+
+        .cyber-panel::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px;
+            right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, var(--primary-glow), var(--secondary-glow));
+            z-index: -1;
+            filter: blur(20px);
+            opacity: 0.5;
+        }
+
+        .cyber-button {
+            border: 1px solid var(--primary-glow);
+            box-shadow: 0 0 10px var(--primary-glow);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .cyber-button:hover, .cyber-button.active {
+            background-color: var(--primary-glow);
+            color: var(--bg-color);
+            box-shadow: 0 0 20px var(--primary-glow), 0 0 30px var(--primary-glow);
+        }
+        
+        .cyber-button:disabled {
+            border-color: #555;
+            color: #555;
+            box-shadow: none;
+            cursor: not-allowed;
+            background-color: transparent;
+        }
+
+        .title-glitch {
+            animation: glitch 1.5s linear infinite;
+        }
+
+        @keyframes glitch {
+            2%, 64% { transform: translate(2px, 0) skew(0deg); }
+            4%, 60% { transform: translate(-2px, 0) skew(0deg); }
+            62% { transform: translate(0, 0) skew(5deg); }
+        }
+        
+        .title-glitch::before,
+        .title-glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .title-glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 var(--secondary-glow);
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+
+        .title-glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 var(--primary-glow), 2px 2px var(--secondary-glow);
+            clip: rect(86px, 450px, 91px, 0);
+            animation: glitch-anim-2 5s infinite linear alternate-reverse;
+        }
+        
+        @keyframes glitch-anim {
+            0% { clip: rect(42px, 9999px, 44px, 0); transform: skew(0.3deg); }
+            100% { clip: rect(5px, 9999px, 80px, 0); transform: skew(0.2deg); }
+        }
+        
+        @keyframes glitch-anim-2 {
+            0% { clip: rect(61px, 9999px, 32px, 0); transform: skew(0.5deg); }
+            100% { clip: rect(81px, 9999px, 1px, 0); transform: skew(0.4deg); }
+        }
+
+        input[type="file"] { display: none; }
+
+        .file-upload-label {
+            border: 2px dashed var(--primary-glow);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-label:hover {
+            border-color: var(--secondary-glow);
+            box-shadow: 0 0 15px var(--secondary-glow);
+            color: var(--secondary-glow);
+        }
+
+        .cyber-input {
+            background: rgba(10, 24, 50, 0.6);
+            border: 1px solid var(--primary-glow);
+            color: var(--primary-glow);
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 5px rgba(0, 242, 255, 0.3);
+        }
+        .cyber-input::placeholder { color: var(--primary-glow); opacity: 0.5; }
+        .cyber-input:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--primary-glow), inset 0 0 8px rgba(0, 242, 255, 0.5);
+        }
+        .cyber-input:disabled {
+            background: rgba(10, 24, 50, 0.2);
+            border-color: #555;
+            color: #555;
+            cursor: not-allowed;
+        }
+        .file-upload-label.disabled {
+            border-color: #555;
+            color: #555;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+
+        .style-option input[type="radio"] { display: none; }
+        .style-option label {
+            border: 1px solid var(--primary-glow);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            text-align: center;
+        }
+        .style-option input[type="radio"]:checked + label {
+            background-color: var(--primary-glow);
+            color: var(--bg-color);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+        
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 242, 255, 0.3);
+            border-top-color: var(--primary-glow);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <main class="w-full max-w-2xl mx-auto">
+        <div class="cyber-panel rounded-lg p-6 md:p-8">
+            <header class="text-center mb-8">
+                <h1 class="relative text-3xl md:text-4xl lg:text-5xl font-bold uppercase title-glitch" data-text="AI.REMIX_ENGINE">AI.REMIX_ENGINE</h1>
+                <p class="text-sm text-center mt-2 opacity-70">// Upload Your Track & Generate a New Reality //</p>
+            </header>
+
+            <!-- Step 1: Upload -->
+            <section id="upload-section" class="mb-6">
+                <h2 class="text-lg font-semibold mb-3 border-b border-b-[var(--primary-glow)] border-opacity-50 pb-2">// STEP_01A: INITIATE_UPLOAD</h2>
+                <label for="mp3-upload" class="file-upload-label w-full p-6 text-center block rounded-md">
+                    <span id="upload-text">DRAG_&_DROP_MP3_OR_CLICK</span>
+                </label>
+                <input type="file" id="mp3-upload" accept=".mp3">
+            </section>
+            
+            <div class="text-center my-4 opacity-50">// OR //</div>
+
+            <!-- YouTube URL Input -->
+            <section id="youtube-section" class="mb-6">
+                <h2 class="text-lg font-semibold mb-3 border-b border-b-[var(--primary-glow)] border-opacity-50 pb-2">// STEP_01B: PROCESS_YOUTUBE_URL</h2>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <input type="text" id="youtube-url" placeholder="PASTE_YOUTUBE_LINK_HERE" class="cyber-input flex-grow p-2 rounded-md">
+                    <button id="process-link-button" class="cyber-button py-2 px-4 rounded-md font-bold">FETCH_AUDIO</button>
+                </div>
+            </section>
+
+            <!-- Step 2: Options -->
+            <section id="options-section" class="mb-6">
+                <h2 class="text-lg font-semibold mb-3 border-b border-b-[var(--primary-glow)] border-opacity-50 pb-2">// STEP_02: SELECT_REMIX_PROTOCOL</h2>
+                <div id="style-selector" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="style-option"><input type="radio" id="style-trap" name="remix-style" value="Trap" checked><label for="style-trap" class="block rounded-md">TRAP</label></div>
+                    <div class="style-option"><input type="radio" id="style-bigroom" name="remix-style" value="Big Room"><label for="style-bigroom" class="block rounded-md">BIG ROOM</label></div>
+                    <div class="style-option"><input type="radio" id="style-techno" name="remix-style" value="Techno"><label for="style-techno" class="block rounded-md">TECHNO</label></div>
+                    <div class="style-option"><input type="radio" id="style-house" name="remix-style" value="House"><label for="style-house" class="block rounded-md">HOUSE</label></div>
+                </div>
+            </section>
+
+             <!-- API Key Section -->
+            <section id="api-section" class="mb-6 pt-4 border-t border-t-[var(--primary-glow)] border-opacity-20">
+                <h2 class="text-lg font-semibold mb-3 border-b border-b-[var(--secondary-glow)] border-opacity-50 pb-2">// STEP_03: AUTHENTICATE</h2>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <input type="password" id="api-key-input" placeholder="ENTER_YOUR_API_KEY" class="cyber-input flex-grow p-2 rounded-md">
+                    <button id="save-api-key" class="cyber-button py-2 px-4 rounded-md font-bold">VALIDATE</button>
+                </div>
+                <p id="api-status" class="text-xs text-green-400 mt-2 h-4 transition-opacity duration-300 opacity-0"></p>
+            </section>
+
+            <!-- Step 4: Action -->
+            <section class="text-center">
+                 <button id="remix-button" class="cyber-button w-full md:w-1/2 py-3 px-6 rounded-md font-bold" disabled>ENGAGE_REMIX_CORE</button>
+                 <button id="reset-button" class="cyber-button w-full md:w-auto mt-4 py-2 px-4 rounded-md font-bold text-sm bg-[var(--secondary-glow)] border-[var(--secondary-glow)] hidden">RESET_INTERFACE</button>
+            </section>
+            
+            <!-- Step 5: Output / Processing -->
+            <section id="output-section" class="mt-8 text-center hidden">
+                <div id="processing-state">
+                    <div class="loader mx-auto"></div>
+                    <p id="status-text" class="mt-4 text-lg animate-pulse">...</p>
+                    <p class="text-xs opacity-60 mt-2">// This may take a moment. Do not disconnect from the network. //</p>
+                </div>
+                
+                <div id="result-state" class="hidden">
+                    <h2 class="text-2xl font-semibold mb-4 text-green-400">// REMIX_COMPLETE</h2>
+                     <audio id="audio-player" controls class="w-full mb-4"></audio>
+                     <a id="download-link" class="cyber-button inline-block w-full md:w-1/2 py-3 px-6 rounded-md font-bold" href="#" download="remix.mp3">DOWNLOAD_REMIXED_MP3</a>
+                </div>
+            </section>
+        </div>
+        <footer class="text-center mt-4 text-xs opacity-50">
+            <p>DISCLAIMER: This front-end requires a backend server to function. The AI remixing is handled server-side.</p>
+        </footer>
+    </main>
+
+    <script>
+        // --- Element References ---
+        const uploadInput = document.getElementById('mp3-upload');
+        const uploadLabel = document.querySelector('.file-upload-label');
+        const uploadText = document.getElementById('upload-text');
+        const youtubeUrlInput = document.getElementById('youtube-url');
+        const processLinkButton = document.getElementById('process-link-button');
+        const remixButton = document.getElementById('remix-button');
+        const resetButton = document.getElementById('reset-button');
+        const outputSection = document.getElementById('output-section');
+        const processingState = document.getElementById('processing-state');
+        const resultState = document.getElementById('result-state');
+        const statusText = document.getElementById('status-text');
+        const audioPlayer = document.getElementById('audio-player');
+        const downloadLink = document.getElementById('download-link');
+        const apiKeyInput = document.getElementById('api-key-input');
+        const saveApiKeyButton = document.getElementById('save-api-key');
+        const apiStatus = document.getElementById('api-status');
+        
+        // --- State Variables ---
+        let sourceData = null; 
+        let sourceDataType = ''; // 'file' or 'url'
+        let apiKey = '';
+
+        // --- API FUNCTION ---
+        async function callRemixApi(source, dataType, style, key) {
+            statusText.textContent = `[1/4] Connecting to secure server...`;
+            
+            // Use FormData to send files and text data together
+            const formData = new FormData();
+            formData.append('style', style);
+            
+            if (dataType === 'file') {
+                formData.append('audio_file', source);
+            } else {
+                formData.append('youtube_url', source);
+            }
+
+            try {
+                // This is the actual request to your backend server.
+                // It's configured to run on your local machine for testing.
+                const response = await fetch('/.netlify/functions/remix', {
+                    method: 'POST',
+                    headers: {
+                        // We send the API key securely in the headers
+                        'Authorization': `Bearer ${key}`
+                    },
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Server error: ${errorText}`);
+                }
+
+                statusText.textContent = `[4/4] Remix downloaded from server...`;
+                const remixedAudioBlob = await response.blob();
+                return remixedAudioBlob;
+                
+            } catch (error) {
+                 console.error('Fetch error:', error);
+                 throw new Error('Could not connect to the server. Is it running?');
+            }
+        }
+
+        // --- UI Logic & Event Listeners ---
+        function setSource(source, dataType, sourceName) {
+            sourceData = source;
+            sourceDataType = dataType;
+            uploadText.textContent = `SOURCE_LOCKED: ${sourceName}`;
+            uploadText.style.color = 'var(--secondary-glow)';
+            
+            youtubeUrlInput.disabled = true;
+            processLinkButton.disabled = true;
+            uploadInput.disabled = true;
+            uploadLabel.classList.add('disabled');
+            
+            remixButton.disabled = false;
+            resetButton.classList.remove('hidden');
+        }
+
+        uploadInput.addEventListener('change', (event) => {
+            const files = event.target.files;
+            if (files.length > 0) {
+                setSource(files[0], 'file', files[0].name);
+            }
+        });
+
+        processLinkButton.addEventListener('click', () => {
+            const url = youtubeUrlInput.value.trim();
+            if (!url.includes('youtube.com/') && !url.includes('youtu.be/')) {
+                alert('// ERROR: INVALID_YOUTUBE_URL //');
+                return;
+            }
+            setSource(url, 'url', 'YOUTUBE_URL');
+        });
+
+        remixButton.addEventListener('click', async () => {
+            if (!sourceData) {
+                alert('// ERROR: NO_SOURCE_SELECTED //');
+                return;
+            }
+            if (!apiKey) {
+                alert('// ERROR: API_KEY_NOT_VALIDATED //');
+                return;
+            }
+            
+            outputSection.classList.remove('hidden');
+            processingState.classList.remove('hidden');
+            resultState.classList.add('hidden');
+            remixButton.disabled = true;
+            resetButton.disabled = true;
+            remixButton.textContent = "PROCESSING...";
+            statusText.classList.remove('text-red-500');
+
+            const selectedStyle = document.querySelector('input[name="remix-style"]:checked').value;
+
+            try {
+                const remixedAudioBlob = await callRemixApi(sourceData, sourceDataType, selectedStyle, apiKey);
+                
+                processingState.classList.add('hidden');
+                resultState.classList.remove('hidden');
+
+                const fileURL = URL.createObjectURL(remixedAudioBlob);
+                audioPlayer.src = fileURL;
+                downloadLink.href = fileURL;
+                
+                let originalName = 'youtube_remix';
+                if (sourceDataType === 'file') {
+                    originalName = sourceData.name.split('.').slice(0, -1).join('.');
+                }
+                downloadLink.download = `${originalName}_[${selectedStyle.toUpperCase()}_REMIX].mp3`;
+
+            } catch (error) {
+                statusText.textContent = `// ERROR: ${error.message} //`;
+                statusText.classList.add('text-red-500');
+            } finally {
+                remixButton.disabled = false;
+                resetButton.disabled = false;
+                remixButton.textContent = "ENGAGE_REMIX_CORE";
+            }
+        });
+        
+        saveApiKeyButton.addEventListener('click', () => {
+            const keyValue = apiKeyInput.value.trim();
+            if (!keyValue) {
+                apiKey = '';
+                apiStatus.textContent = "API Key cleared.";
+                apiStatus.classList.replace('text-green-400', 'text-yellow-400');
+            } else {
+                apiKey = keyValue;
+                apiStatus.textContent = "API KEY VALIDATED & STORED (SESSION ONLY)";
+                apiStatus.classList.replace('text-yellow-400', 'text-green-400');
+            }
+            apiStatus.classList.remove('opacity-0');
+            setTimeout(() => apiStatus.classList.add('opacity-0'), 4000);
+        });
+        
+        resetButton.addEventListener('click', () => {
+            sourceData = null;
+            sourceDataType = '';
+            uploadText.textContent = 'DRAG_&_DROP_MP3_OR_CLICK';
+            uploadText.style.color = 'var(--primary-glow)';
+            uploadInput.value = '';
+            uploadInput.disabled = false;
+            uploadLabel.classList.remove('disabled');
+
+            youtubeUrlInput.value = '';
+            youtubeUrlInput.disabled = false;
+            processLinkButton.disabled = false;
+            
+            remixButton.disabled = true;
+            resetButton.classList.add('hidden');
+            outputSection.classList.add('hidden');
+        });
+
+    </script>
+</body>
+</html>
+
+

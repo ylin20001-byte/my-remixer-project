@@ -1,0 +1,14 @@
+This file tells Netlify how to build and deploy your site.
+[build]
+
+Directory where your serverless functions live
+functions = "netlify/functions"
+
+The directory to publish, which is the root of your project
+publish = "."
+
+[functions]
+
+Specify the Node.js version for the functions environment
+node_bundler = "esbuild"
+included_files = ["node_modules/**"]
